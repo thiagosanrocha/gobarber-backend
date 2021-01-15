@@ -16,9 +16,9 @@ appointmentsRouter.get('/', async (request, response) => {
 });
 
 appointmentsRouter.post('/', async (request, response) => {
-  const { provider, date } = request.body;
+  const { provider_id, date } = request.body;
 
-  if (!provider || !date)
+  if (!provider_id || !date)
     return response
       .status(400)
       .json({ error: 'Provider or Date was not send.' });
@@ -29,7 +29,7 @@ appointmentsRouter.post('/', async (request, response) => {
     const createAppointmentService = new CreateAppointmentService();
 
     const newAppointment = await createAppointmentService.execute({
-      provider,
+      provider_id,
       date: turnsIntoDate,
     });
 
