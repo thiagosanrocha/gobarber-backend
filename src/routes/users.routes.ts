@@ -1,25 +1,12 @@
 // Modules
 import { Router } from 'express';
-import multer, { diskStorage } from 'multer';
-import { resolve } from 'path';
-import { v4 as uuid } from 'uuid';
 
-// Services
+// Services & Middlewares & Configs
 import CreateUserService from '../services/CreateUserService';
 import ensureAuthentication from '../middlewares/ensureAuthentication';
+import avatarUpload from '../configs/avatarUpload';
 
 const usersRouter = Router();
-
-const upload = multer({
-  storage: diskStorage({
-    destination: resolve(__dirname, '..', '..', 'tmp'),
-    filename: (request, file, callback) => {
-      const fileName = `${uuid().replace('-', '')}-${file.originalname}`;
-
-      callback(null, fileName);
-    },
-  }),
-});
 
 usersRouter.post('/', async (request, response) => {
   try {
@@ -42,7 +29,7 @@ usersRouter.post('/', async (request, response) => {
 usersRouter.patch(
   '/avatar',
   ensureAuthentication,
-  upload.single('avatar'),
+  avatarUpload.single('avatar'),
   async (request, response) => {
     console.log(request.file);
     return response.json({ ok: true });
