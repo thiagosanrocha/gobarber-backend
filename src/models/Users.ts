@@ -20,6 +20,9 @@ class Users {
   @Column('varchar')
   password: string;
 
+  @Column('varchar')
+  avatar: string | null;
+
   @CreateDateColumn()
   created_at: Date;
 
