@@ -1,10 +1,15 @@
-import multer, { diskStorage } from 'multer';
-import { resolve } from 'path';
+import multer, { Options } from 'multer';
+import path from 'path';
 import crypto from 'crypto';
 
-export default multer({
-  storage: diskStorage({
-    destination: resolve(__dirname, '..', '..', 'tmp'),
+type uploadConfigs = Options & { directory: string };
+
+const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp');
+
+const avatarUploadConfigs: uploadConfigs = {
+  directory: tmpFolder,
+  storage: multer.diskStorage({
+    destination: tmpFolder,
     filename: (request, file, callback) => {
       const hash = crypto.randomBytes(10).toString('hex');
 
@@ -13,4 +18,6 @@ export default multer({
       return callback(null, fileName);
     },
   }),
-});
+};
+
+export default avatarUploadConfigs;
