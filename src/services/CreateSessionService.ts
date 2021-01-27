@@ -3,8 +3,8 @@ import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
 import Users from '../models/Users';
-
 import tokenConfig from '../configs/token';
+import AppError from '../errors/AppError';
 
 interface Request {
   email: string;
@@ -23,7 +23,7 @@ class CreateSessionService {
     const findUser = await usersRepository.findOne({ where: { email } });
 
     if (!findUser) {
-      throw new Error('Invalid email/password combination');
+      throw new AppError('Invalid email/password combination', 401);
     }
 
     const user = findUser;
@@ -31,7 +31,7 @@ class CreateSessionService {
     const passwordMatch = await compare(password, user.password);
 
     if (!passwordMatch) {
-      throw new Error('Invalid email/password combination');
+      throw new AppError('Invalid email/password combination', 401);
     }
 
     const token = sign({}, tokenConfig.secretKey, {

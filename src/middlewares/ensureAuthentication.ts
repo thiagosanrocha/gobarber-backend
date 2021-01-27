@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
 import tokenConfig from '../configs/token';
+import AppError from '../errors/AppError';
 
 interface TokenPayload {
   iat: number;
@@ -16,11 +17,11 @@ const ensureAuthentication = (
 ): void | Response => {
   const { authorization } = request.headers;
 
-  if (!authorization) throw new Error('User without permission');
-
-  const [, token] = authorization.split(' ');
+  if (!authorization) throw new AppError('User without permission', 401);
 
   try {
+    const [, token] = authorization.split(' ');
+
     const decodedToken = verify(token, tokenConfig.secretKey);
 
     const { sub } = decodedToken as TokenPayload;
@@ -31,7 +32,7 @@ const ensureAuthentication = (
 
     return next();
   } catch {
-    throw new Error('Invalid token');
+    throw new AppError('Invalid token', 401);
   }
 };
 
